@@ -19,7 +19,7 @@ hold on;
 if strcmp(psthType, 'norm')
     plot(zeros(1, nD), depthBins(1:end-1), 'k--', 'LineWidth', 2.0)
     colormap(ax, colormap_BlueWhiteRed)
-    caxis([-10 10]);
+    caxis([-quantile(abs(allP(:)),0.99) quantile(abs(allP(:)),0.99)]);
 else
     plot(zeros(1, nD), depthBins(1:end-1), 'w--', 'LineWidth', 2.0)
 end

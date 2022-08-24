@@ -9,7 +9,7 @@ function S = loadParamsPy(fn)
 % N. Steinmetz. 
 
 fid = fopen(fn, 'r');
-mcFileMeta = textscan(fid, '%s%s', 'Delimiter', '=',  'ReturnOnError', false);
+mcFileMeta = textscan(fid, '%s%s', 'Delimiter', '=');%,  'ReturnOnError', false);
 fclose(fid);
 csName = mcFileMeta{1};
 csValue = mcFileMeta{2};
@@ -21,7 +21,7 @@ for i=1:numel(csName)
         if csValue{i}(1)==''''; % if first character of the value is a single quote
             % then it's a string and we can evaluate without adding a
             % single quote
-            eval(sprintf('%s = %s;', vcName1, csValue{i}));
+            eval(sprintf('%s = %s;', vcName1, csValue{i}));        
         else
             eval(sprintf('%s = ''%s'';', vcName1, csValue{i}));
         end

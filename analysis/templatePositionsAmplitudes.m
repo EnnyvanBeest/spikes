@@ -1,5 +1,5 @@
 
-function [spikeAmps, spikeDepths, templateDepths, tempAmps, tempsUnW, templateDuration, waveforms] = templatePositionsAmplitudes(temps, winv, ycoords, spikeTemplates, tempScalingAmps)
+function [spikeAmps, spikeDepths, templateDepths, templateXPos, tempAmps, tempsUnW, templateDuration, waveforms] = templatePositionsAmplitudes(temps, winv, ycoords, xcoords, spikeTemplates, tempScalingAmps)
 % function [spikeAmps, spikeDepths, templateDepths, tempAmps, tempsUnW, templateDuration, waveforms] = templatePositionsAmplitudes(temps, winv, ycoords, spikeTemplates, tempScalingAmps)
 %
 % Compute some basic things about spikes and templates
@@ -11,6 +11,7 @@ function [spikeAmps, spikeDepths, templateDepths, tempAmps, tempsUnW, templateDu
 % to the position of the template it was extracted with)
 % - templateDepths is the position along the probe of every template
 % - templateAmps is the amplitude of each template
+% - templateXPos is the xposition of each template
 % - tempsUnW are the unwhitened templates
 % - templateDuration is the trough-to-peak time (in samples)
 % - waveforms: returns the waveform from the max-amplitude channel
@@ -47,6 +48,8 @@ tempChanAmps(bsxfun(@lt, tempChanAmps, threshVals)) = 0;
 % ... in order to compute the depth as a center of mass
 templateDepths = sum(bsxfun(@times,tempChanAmps,ycoords'),2)./sum(tempChanAmps,2);
 
+% Compute xpos as center of mass
+templateXPos = sum(bsxfun(@times,tempChanAmps,xcoords'),2)./sum(tempChanAmps,2);
 % assign all spikes the amplitude of their template multiplied by their
 % scaling amplitudes (templates are zero-indexed)
 spikeAmps = tempAmpsUnscaled(spikeTemplates+1).*tempScalingAmps;

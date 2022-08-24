@@ -17,10 +17,10 @@ fid = fopen(filename, 'r');
 % skip over the first samples of the other channels
 q = fread(fid, (syncChanIndex-1), 'int16=>int16');
 
-nSamp = d.bytes/2/numChans;
+nSamp = round(d.bytes/2/numChans);
 
 if nargout>0
-    syncDat = zeros(1, nSamp, 'int16');
+    syncDat = zeros(1, nSamp, 'uint16');
 end
 
 nBatch = floor(nSamp/maxReadSize);

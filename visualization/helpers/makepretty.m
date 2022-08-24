@@ -2,12 +2,12 @@
 
 function makepretty()
 % set some graphical attributes of the current axis
+set(gcf,'Color',[1 1 1])
+set(get(gca, 'XLabel'), 'FontSize', 10);
+set(get(gca, 'YLabel'), 'FontSize', 10);
+set(gca, 'FontSize', 12,'TickDir','out');
 
-set(get(gca, 'XLabel'), 'FontSize', 17);
-set(get(gca, 'YLabel'), 'FontSize', 17);
-set(gca, 'FontSize', 13);
-
-set(get(gca, 'Title'), 'FontSize', 20);
+set(get(gca, 'Title'), 'FontSize', 15);
 
 ch = get(gca, 'Children');
 
@@ -22,3 +22,4 @@ for c = 1:length(ch)
         end
     end
 end
+box off

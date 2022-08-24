@@ -28,7 +28,7 @@ set(ax, 'ColorOrder', copper(length(marginalChans)));
 plot(F(dispF), 10*log10(allPowerEst(marginalChans,dispF)));
 ylabel('power (dB)');
 set(ax, 'XTick', []);
-hleg = legend(array2stringCell(marginalChans*10));
+hleg = legend(cellfun(@num2str,num2cell(marginalChans*10),'UniformOutput',0));
 set(hleg, 'Position', [0.7125    0.7607    0.1036    0.2083]);
 makepretty;
 

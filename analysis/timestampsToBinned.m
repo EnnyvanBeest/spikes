@@ -14,8 +14,8 @@ numBins = length(binBorders)-1;
 
 if isempty(referencePoints)
     binArray = [];
-    binCenters = binBorders(1:end-1)+binSize/2; % not sure if this is the same as what you get below?
-    return;
+    referencePoints = binBorders(1:end-1)+binSize/2; % not sure if this is the same as what you get below?
+    return
 end
 
 binArray = zeros(length(referencePoints), numBins);

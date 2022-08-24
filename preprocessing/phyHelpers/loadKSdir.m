@@ -9,25 +9,42 @@ else
 end
 
 if ~isfield(params, 'excludeNoise')
-    params.excludeNoise = true;
+    params.excludeNoise = false;
 end
 if ~isfield(params, 'loadPCs')
     params.loadPCs = false;
 end
 
 % load spike data
-
 spikeStruct = loadParamsPy(fullfile(ksDir, 'params.py'));
 
-ss = readNPY(fullfile(ksDir, 'spike_times.npy'));
+if exist(fullfile(ksDir, 'spike_times_corrected.npy'))
+    ss = readNPY(fullfile(ksDir, 'spike_times_corrected.npy')); %For chronic sessions
+else
+    ss = readNPY(fullfile(ksDir, 'spike_times.npy'));
+end
 st = double(ss)/spikeStruct.sample_rate;
 spikeTemplates = readNPY(fullfile(ksDir, 'spike_templates.npy')); % note: zero-indexed
 
-if exist(fullfile(ksDir, 'spike_clusters.npy'))
-    clu = readNPY(fullfile(ksDir, 'spike_clusters.npy'));
+if exist(fullfile(ksDir,'spike_datasets.npy'))
+    datas = readNPY(fullfile(ksDir,'spike_datasets.npy'));
 else
-    clu = spikeTemplates;
+    datas = zeros(length(spikeTemplates),1);
+    params.thisdate = [];
 end
+
+if ~isfield(params,'thisdate') || isempty(params.thisdate)
+    datasetidx = unique(datas);
+else 
+    datasetidx = find(cell2mat(cellfun(@(X) any(strfind(X,params.thisdate)),strsplit(spikeStruct.dat_path,','),'UniformOutput',0)))-1; %Which dataset to take?
+end
+
+if exist(fullfile(ksDir, 'spike_clusters.npy'))
+    clu = readNPY(fullfile(ksDir, 'spike_clusters.npy')); %Changed by phy
+else
+    clu = spikeTemplates; % Original
+end
+
 
 tempScalingAmps = readNPY(fullfile(ksDir, 'amplitudes.npy'));
 
@@ -46,6 +63,8 @@ end
 if exist(fullfile(ksDir, 'cluster_group.tsv')) 
    cgsFile = fullfile(ksDir, 'cluster_group.tsv');
 end 
+
+
 if ~isempty(cgsFile)
     [cids, cgs] = readClusterGroupsCSV(cgsFile);
 
@@ -55,7 +74,7 @@ if ~isempty(cgsFile)
         st = st(~ismember(clu, noiseClusters));
         spikeTemplates = spikeTemplates(~ismember(clu, noiseClusters));
         tempScalingAmps = tempScalingAmps(~ismember(clu, noiseClusters));        
-        
+        datas = datas(~ismember(clu, noiseClusters));
         if params.loadPCs
             pcFeat = pcFeat(~ismember(clu, noiseClusters), :,:);
             %pcFeatInd = pcFeatInd(~ismember(cids, noiseClusters),:);
@@ -74,7 +93,18 @@ else
     cids = unique(spikeTemplates);
     cgs = 3*ones(size(cids));
 end
-    
+   
+% Only take needed data
+spikeTemplates = spikeTemplates(ismember(datas,datasetidx));
+tempScalingAmps = tempScalingAmps(ismember(datas,datasetidx));
+st = st(ismember(datas,datasetidx));
+clu = clu(ismember(datas,datasetidx));
+datas = datas(ismember(datas,datasetidx));
+if params.loadPCs
+    pcFeat = pcFeat(ismember(datas,datasetidx), :,:);
+    %pcFeatInd = pcFeatInd(~ismember(cids, noiseClusters),:);
+end
+        
 
 coords = readNPY(fullfile(ksDir, 'channel_positions.npy'));
 ycoords = coords(:,2); xcoords = coords(:,1);
@@ -94,3 +124,4 @@ spikeStruct.temps = temps;
 spikeStruct.winv = winv;
 spikeStruct.pcFeat = pcFeat;
 spikeStruct.pcFeatInd = pcFeatInd;
+spikeStruct.dataset = datas;

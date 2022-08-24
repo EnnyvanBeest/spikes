@@ -28,7 +28,7 @@ spikeTimes = spikeTimes(spikeTimes>min(eventTimes+window(1)) & spikeTimes<max(ev
 [binnedArray, bins] = timestampsToBinned(spikeTimes, eventTimes, psthBinSize, window);
 
 spikeCounts = sum(binnedArray,2);
-psth = mean(binnedArray./psthBinSize); % normalize to Hz
+psth = mean(binnedArray./psthBinSize,1); % normalize to Hz
 
 [tr,b] = find(binnedArray);
 [rasterX,yy] = rasterize(bins(b));
