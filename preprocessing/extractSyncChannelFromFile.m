@@ -36,7 +36,11 @@ end
 dat = fread(fid, [1, Inf], 'int16=>int16', (numChans-1)*2); % skipping other channels
 fwrite(fidOut, dat, 'int16');
 if nargout>0
-    syncDat(nBatch*maxReadSize+1:end) = dat;
+    try
+        syncDat(nBatch*maxReadSize+1:end) = dat;
+    catch
+        syncDat(nBatch*maxReadSize+1:nBatch*maxReadSize+length(dat)) = dat;
+    end
 end
 
 fclose(fid);
