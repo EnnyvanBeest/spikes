@@ -21,6 +21,4 @@ for d = 1:length(dataFiles)
     end
     
 end
-
-
 disp(' done.')
