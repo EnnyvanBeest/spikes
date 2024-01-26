@@ -15,7 +15,8 @@ fprintf(1,' loading %s\n', filename);
 fid = fopen(filename, 'r');
 
 if contains(filename,'.cbin')
-    keyboard
+    disp('Cannot currently handle this')
+    syncDat = 0;
 else
 
     % skip over the first samples of the other channels

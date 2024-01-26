@@ -3,10 +3,16 @@
 function syncDat = extractSyncChannel(folder, numChans, syncChanIndex)
 % extraChanIndices are 1-indexed
 
-dataFiles = dir(fullfile(folder,'*.ap.*bin'));
+if contains(folder,'.bin')
+    %already a file
+    dataFiles = dir(folder);
+else
+    dataFiles = dir(fullfile(folder,'*.ap.*bin'));
+end
 if isempty(dataFiles)
     dataFiles = dir(fullfile(folder,'*.nidq.bin'));
 end
+
 for d = 1:length(dataFiles)
     filename = fullfile(dataFiles(d).folder,dataFiles(d).name);
     [folder,fn] = fileparts(filename);
